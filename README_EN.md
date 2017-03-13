@@ -2,6 +2,18 @@
 
 [![Gitter][gitter-picture]][gitter] ![py27][py27] ![py35][py35] [Chinese version][chinese-version]
 
+Add anti withdraw function based on itchat.
+
+Anti withdraw support all kinds of message including "TEXT, PICTURE, MAP, CARD, SHARING, RECORDING, ATTACHMENT, VIDEO, FRIENDS".
+
+When someone withdraw a text message, computer will automatically send you that text message through File Transfer in WeChat.
+
+When someone withdraw other kinds of message, computer will automatically record that message in Revocation directory.
+
+Current version only support English! Chinese will be supported in the next version.
+
+To run the program. Simply run anti_withdraw.py in itchat directory.
+
 itchat is an open source api for WeChat, a commonly-used Chinese social networking app.
 
 Accessing your personal wechat account through itchat in python has never been easier.
