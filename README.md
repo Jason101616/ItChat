@@ -6,7 +6,9 @@ Add anti withdraw function based on itchat.
 
 Anti withdraw support all kinds of message including "TEXT, PICTURE, MAP, CARD, SHARING, RECORDING, ATTACHMENT, VIDEO, FRIENDS".
 
-When someone withdraw a message, computer will automatically send you that message through File Transfer in WeChat.
+When someone withdraw a text message, computer will automatically send you that text message through File Transfer in WeChat.
+
+When someone withdraw other kinds of message, computer will automatically record that message in Revocation directory.
 
 Current version only support English! Chinese will be supported in the next version.
 
