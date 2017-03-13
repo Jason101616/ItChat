@@ -1,6 +1,6 @@
 # itchat
 
-[![Gitter][gitter-picture]][gitter] ![py27][py27] ![py35][py35] [English version][english-version]
+[![Gitter][gitter-picture]][gitter] ![py27][py27] ![py35][py35] [English version](https://github.com/Jason101616/ItChat/blob/master/README_EN.md)
 
 Add anti withdraw function based on itchat.
 
