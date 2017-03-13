@@ -214,31 +214,53 @@ def SaveMsg(msg):
         # old_msg_id = re.search(";msgid\&gt;(.*?)\&lt;\/msgid\&gt", msg['Content']).group(1)
         old_msg_id = re.search("\<msgid\>(.*?)\<\/msgid\>", msg['Content']).group(1)
         old_msg = msg_dict.get(old_msg_id, {})
+        msg_send = r"您的好友：" \
+                   + old_msg.get('msg_from', "") \
+                   + r"  在 [" + old_msg.get('msg_time_touser', "") \
+                   + r"]于\"" + old_msg.get('msg_group_name', "") + "\"" \
+                   + r", 撤回了一条 [" + old_msg['msg_type'] + "] 消息, 内容如下:" \
+                   + old_msg.get('msg_content', "")
+        if old_msg['msg_type'] == "Sharing":
+            msg_send += r", 链接: " \
+                        + old_msg.get('msg_url', "")
+        elif old_msg['msg_type'] == 'Picture' \
+                or old_msg['msg_type'] == 'Recording' \
+                or old_msg['msg_type'] == 'Video' \
+                or old_msg['msg_type'] == 'Attachment':
+            msg_send += r", 存储在当前目录下Revocation文件夹中"
+            shutil.move(old_msg['msg_content'], r".\\Revocation\\")
+
+        print("Message send to my phone: ", msg_send)
+        itchat.send(msg_send, toUserName='filehelper')  # 将撤回消息的通知以及细节发送到文件助手
+
+        msg_dict.pop(old_msg_id)
+        ClearTimeOutMsg()
     elif re.search(r";!\[CDATA\[You've recalled a message\.\]\]", msg['Content']) != None:
         old_msg_id = re.search(";msgid\&gt;(.*?)\&lt;\/msgid\&gt", msg['Content']).group(1)
         old_msg = msg_dict.get(old_msg_id, {})
 
-    msg_send = r"您的好友：" \
-               + old_msg.get('msg_from', "") \
-               + r"  在 [" + old_msg.get('msg_time_touser', "") \
-               + r"]于\"" + old_msg.get('msg_group_name', "") + "\"" \
-               + r", 撤回了一条 [" + old_msg['msg_type'] + "] 消息, 内容如下:" \
-               + old_msg.get('msg_content', "")
-    if old_msg['msg_type'] == "Sharing":
-        msg_send += r", 链接: " \
-                    + old_msg.get('msg_url', "")
-    elif old_msg['msg_type'] == 'Picture' \
-            or old_msg['msg_type'] == 'Recording' \
-            or old_msg['msg_type'] == 'Video' \
-            or old_msg['msg_type'] == 'Attachment':
-        msg_send += r", 存储在当前目录下Revocation文件夹中"
-        shutil.move(old_msg['msg_content'], r".\\Revocation\\")
+        msg_send = r"您的好友：" \
+                   + old_msg.get('msg_from', "") \
+                   + r"  在 [" + old_msg.get('msg_time_touser', "") \
+                   + "]于\"" + old_msg.get('msg_group_name', "") + "\"" \
+                   + r", 撤回了一条 [" + old_msg['msg_type'] + "] 消息, 内容如下:" \
+                   + old_msg.get('msg_content', "")
+        if old_msg['msg_type'] == "Sharing":
+            msg_send += r", 链接: " \
+                        + old_msg.get('msg_url', "")
+        elif old_msg['msg_type'] == 'Picture' \
+                or old_msg['msg_type'] == 'Recording' \
+                or old_msg['msg_type'] == 'Video' \
+                or old_msg['msg_type'] == 'Attachment':
+            msg_send += r", 存储在当前目录下Revocation文件夹中"
+            shutil.move(old_msg['msg_content'], r".\\Revocation\\")
+        print("Message send to my phone: ", msg_send)
+        itchat.send(msg_send, toUserName='filehelper')  # 将撤回消息的通知以及细节发送到文件助手
 
-    print("Message send to my phone: ", msg_send)
-    itchat.send(msg_send, toUserName='filehelper')  # 将撤回消息的通知以及细节发送到文件助手
-
-    msg_dict.pop(old_msg_id)
-    ClearTimeOutMsg()
+        msg_dict.pop(old_msg_id)
+        ClearTimeOutMsg()
+    else:
+        pass
 
 
 itchat.auto_login(hotReload=True)
