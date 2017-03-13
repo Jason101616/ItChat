@@ -63,6 +63,7 @@ def configured_reply(self):
             r = None
         else:
             try:
+                # print(r)
                 r = replyFn(msg)
                 if r is not None:
                     self.send(r, msg.get('FromUserName'))

@@ -47,6 +47,7 @@ def produce_msg(core, msgList):
     srl = [40, 43, 50, 52, 53, 9999]
     for m in msgList:
         if '@@' in m['FromUserName'] or '@@' in m['ToUserName']:
+            # print("Have produce groupchat")
             produce_group_chat(core, m)
         else:
             utils.msg_formatter(m, 'Content')
@@ -188,6 +189,7 @@ def produce_msg(core, msgList):
         rl.append(m)
     return rl
 
+
 def produce_group_chat(core, msg):
     r = re.match('(@[0-9a-z]*?):<br/>(.*)$', msg['Content'])
     if r:
@@ -203,24 +205,43 @@ def produce_group_chat(core, msg):
         msg['isAt'] = False
         return
     chatroom = core.storageClass.search_chatrooms(userName=chatroomUserName)
+    try:
+        msg['GroupChatName'] = chatroom['NickName']
+    except:
+        traceback.print_exc()
+        pass
+    # print("produce_group_chat chatroom1:", chatroom)
+
     member = utils.search_dict_list((chatroom or {}).get(
         'MemberList') or [], 'UserName', actualUserName)
+
+    # print("produce_group_chat member1:", member)
+
     if member is None:
         chatroom = core.update_chatroom(msg['FromUserName'])
         member = utils.search_dict_list((chatroom or {}).get(
             'MemberList') or [], 'UserName', actualUserName)
+
+        # print("produce_group_chat chatroom2:", chatroom)
+        # print("produce_group_chat member2:", member)
     if member is None:
         logger.debug('chatroom member fetch failed with %s' % actualUserName)
+        msg['isAt'] = False
     else:
+        # print("produce_group_chat member3:", member)
         msg['ActualUserName'] = actualUserName
         msg['ActualNickName'] = member['DisplayName'] or member['NickName']
         msg['Content']        = content
+
         utils.msg_formatter(msg, 'Content')
         atFlag = '@' + (chatroom['self']['DisplayName']
             or core.storageClass.nickName)
+        # msg['isAt'] = True
         msg['isAt'] = (
             (atFlag + (u'\u2005' if u'\u2005' in msg['Content'] else ' '))
             in msg['Content'] or msg['Content'].endswith(atFlag))
+        # print("GroupChat, msg['isAt'] = ", msg['isAt'], 'atFlag = ', atFlag)
+
 
 def send_raw_msg(self, msgType, content, toUserName):
     url = '%s/webwxsendmsg' % self.loginInfo['url']
@@ -400,6 +421,7 @@ def send_video(self, fileDir=None, toUserName=None, mediaId=None):
     return ReturnValue(rawResponse=r)
 
 def send(self, msg, toUserName=None, mediaId=None):
+#def send(self, msg, toUserName=None, mediaId=None):
     if not msg:
         r = ReturnValue({'BaseResponse': {
             'ErrMsg': 'No message.',
